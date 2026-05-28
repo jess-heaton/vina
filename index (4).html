@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Your Business — Vina</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+      color: #1a2942;
+    }
+
+    /* Top bar */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #e5e9f0;
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: bold;
+      font-size: 22px;
+      color: #1a2942;
+    }
+    .logo-icon {
+      width: 24px;
+      height: 24px;
+      color: #4a5d8f;
+    }
+    .browse-btn {
+      background: #1a2942;
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 6px;
+      border: none;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Main */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+    h1 {
+      font-size: 64px;
+      font-weight: bold;
+      color: #1a2942;
+      margin-bottom: 40px;
+      letter-spacing: -0.02em;
+    }
+
+    /* Listing info card */
+    .listing-card {
+      background: #fff;
+      border: 1px solid #e5e9f0;
+      border-radius: 10px;
+      padding: 18px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .listing-card.empty {
+      background: #fff8e6;
+      border-color: #f0d97d;
+    }
+    .listing-info {
+      font-size: 14px;
+    }
+    .listing-info .label {
+      color: #6b7891;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 11px;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .listing-info .value {
+      color: #1a2942;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .listing-info .secondary {
+      color: #6b7891;
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    /* Chat container */
+    #voiceflow-chat {
+      width: 100%;
+      height: 70vh;
+      min-height: 600px;
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e5e9f0;
+      overflow: hidden;
+    }
+
+    /* Demo banner */
+    .demo-banner {
+      background: linear-gradient(90deg, #fef3c7, #fef9e6);
+      border: 1px solid #f0d97d;
+      border-radius: 8px;
+      padding: 14px 20px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: #78540a;
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+    .demo-banner strong { color: #5c3f00; }
+    .demo-banner code {
+      background: rgba(0,0,0,0.07);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="logo">
+      <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+      </svg>
+      vina
+    </div>
+    <button class="browse-btn">Browse directories</button>
+  </div>
+
+  <main>
+    <h1>Update your business</h1>
+
+    <div class="demo-banner">
+      <strong>💡 Demo Preview:</strong> This page reads <code>?site=</code> and <code>?bid=</code> from the URL to pre-load the right listing. Try
+      <code>?site=sharonsprings-ks&amp;bid=1773</code> for Towns End Tavern.
+    </div>
+
+    <div class="listing-card" id="listing-card">
+      <div class="listing-info">
+        <span class="label">Loading listing…</span>
+      </div>
+    </div>
+
+    <div id="voiceflow-chat"></div>
+  </main>
+
+  <script>
+    // Read URL params and show listing info
+    const params = new URLSearchParams(window.location.search);
+    const site_slug   = params.get('site') || '';
+    const business_id = params.get('bid')  || '';
+
+    const card = document.getElementById('listing-card');
+    if (site_slug && business_id) {
+      const townLabel = site_slug.replace('-ks', '').replace(/-/g, ' ')
+        .replace(/\b\w/g, c => c.toUpperCase()) + ', KS';
+      card.innerHTML = `
+        <div class="listing-info">
+          <span class="label">Editing Listing</span>
+          <div class="value">Listing #${business_id}</div>
+          <div class="secondary">${townLabel}</div>
+        </div>
+        <div class="listing-info" style="text-align:right">
+          <span class="label">Site</span>
+          <div class="value" style="font-size:14px;font-family:monospace">${site_slug}</div>
+        </div>
+      `;
+    } else {
+      card.classList.add('empty');
+      card.innerHTML = `
+        <div class="listing-info">
+          <span class="label">⚠️ No listing selected</span>
+          <div class="value" style="font-size:14px;font-weight:normal;color:#78540a">
+            Add <code style="font-family:monospace;background:rgba(0,0,0,0.07);padding:2px 6px;border-radius:3px">?site=sharonsprings-ks&amp;bid=1773</code> to the URL
+          </div>
+        </div>
+      `;
+    }
+  </script>
+
+  <script>
+    // File Upload Extension
+    const FileUploadExtension = {
+      name: 'FileUpload',
+      type: 'response',
+      match: ({ trace }) =>
+        trace.type === 'ext_fileUpload' || trace.payload?.name === 'ext_fileUpload',
+      render: ({ trace, element }) => {
+        const container = document.createElement('div');
+        container.innerHTML = `
+          <style>
+            .vf-upload-box {
+              border: 2px dashed #4a5d8f;
+              border-radius: 10px;
+              padding: 28px 20px;
+              text-align: center;
+              cursor: pointer;
+              background: #f5f7fa;
+              font-family: Georgia, serif;
+              transition: border-color 0.2s, background 0.2s;
+            }
+            .vf-upload-box:hover {
+              border-color: #1a2942;
+              background: #e8edf5;
+            }
+            .vf-upload-box p {
+              font-size: 13px;
+              color: #1a2942;
+              margin: 0;
+              font-weight: bold;
+            }
+            .vf-upload-box span {
+              font-size: 11px;
+              color: #6b7891;
+              display: block;
+              margin-top: 4px;
+            }
+          </style>
+          <div class="vf-upload-box">
+            <p>Drag and drop a photo here or click to upload</p>
+            <span>JPG, PNG, WEBP</span>
+          </div>
+          <input type="file" accept="image/*" style="display:none">
+        `;
+        const fileInput = container.querySelector('input[type=file]');
+        container.querySelector('.vf-upload-box').addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', function () {
+          const file = fileInput.files[0];
+          container.innerHTML = `<img src="https://s3.amazonaws.com/com.voiceflow.studio/share/upload/upload.gif" width="50" height="50">`;
+          const data = new FormData();
+          data.append('file', file);
+          fetch('https://tmpfiles.org/api/v1/upload', { method: 'POST', body: data })
+            .then(r => r.ok ? r.json() : Promise.reject(r.statusText))
+            .then(result => {
+              container.innerHTML = `<img src="https://s3.amazonaws.com/com.voiceflow.studio/share/check/check.gif" width="50" height="50">`;
+              window.voiceflow.chat.interact({
+                type: 'complete',
+                payload: { file: result.data.url.replace('https://tmpfiles.org/', 'https://tmpfiles.org/dl/') },
+              });
+            })
+            .catch(() => { container.innerHTML = '<div>Upload failed, please try again.</div>'; });
+        });
+        element.appendChild(container);
+      },
+    };
+  </script>
+
+  <script type="text/javascript">
+    (function(d, t) {
+      var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
+      v.onload = function() {
+        window.voiceflow.chat.load({
+          verify: { projectID: '69ff0095312149110f91eef5' },
+          url: 'https://general-runtime.voiceflow.com',
+          voice: { url: "https://runtime-api.voiceflow.com" },
+          allowDangerousHTML: true,
+          render: {
+            mode: 'embedded',
+            target: document.getElementById('voiceflow-chat')
+          },
+          assistant: { extensions: [ FileUploadExtension ] },
+          launch: {
+            event: {
+              type: 'launch',
+              payload: { site_slug: site_slug, business_id: business_id }
+            }
+          }
+        });
+      }
+      v.src = "https://cdn.voiceflow.com/widget-next/bundle.mjs";
+      v.type = "text/javascript";
+      s.parentNode.insertBefore(v, s);
+    })(document, 'script');
+  </script>
+
+</body>
+</html>
